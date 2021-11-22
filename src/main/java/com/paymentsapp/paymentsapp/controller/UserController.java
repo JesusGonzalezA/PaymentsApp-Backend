@@ -37,13 +37,7 @@ public class UserController {
     @PatchMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
         try {
-            User user = userService.get(username);
-
-            if ( user == null )
-                throw new NoSuchElementException("The user does not exist");
-            if (!passwordHelper.matches(password, user.getPassword()))
-                throw new BadCredentialsException("The password is incorrect");
-
+            userService.login(username,password);
             return new ResponseEntity<String>("Logged in", HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<String>(e.getMessage(),HttpStatus.NOT_FOUND);

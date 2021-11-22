@@ -1,15 +1,17 @@
 package com.paymentsapp.paymentsapp.service;
 
+import com.paymentsapp.paymentsapp.exception.BadCredentialsException;
 import com.paymentsapp.paymentsapp.exception.UserAlreadyExistsException;
 import com.paymentsapp.paymentsapp.infraestructure.IUserRepository;
 import com.paymentsapp.paymentsapp.model.User;
 import com.paymentsapp.paymentsapp.security.PasswordHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class UserService implements IUserService {
@@ -53,5 +55,17 @@ public class UserService implements IUserService {
         String encryptedPassword = passwordHelper.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         userRepository.save(user);
+    }
+
+    @Override
+    public Boolean login(String username, String password) throws BadCredentialsException {
+        User user = get(username);
+
+        if ( user == null )
+            throw new NoSuchElementException("The user does not exist");
+        if (!passwordHelper.matches(password, user.getPassword()))
+            throw new BadCredentialsException("The password is incorrect");
+
+        return true;
     }
 }
