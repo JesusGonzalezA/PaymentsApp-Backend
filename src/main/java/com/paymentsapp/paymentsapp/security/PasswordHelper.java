@@ -17,6 +17,9 @@ public class PasswordHelper {
     public PasswordEncoder getEncoder() {
         return this.encoder;
     }
+
+    public boolean matches(String decodedPassword, String encodedPassword) { return this.encoder.matches(decodedPassword,encodedPassword);}
+
 }
 
 
