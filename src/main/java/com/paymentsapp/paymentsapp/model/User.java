@@ -1,8 +1,11 @@
 package com.paymentsapp.paymentsapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class User {
@@ -13,7 +16,11 @@ public class User {
     @Column(unique=true)
     private String username;
     @NotNull
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    @OneToMany(mappedBy = "user", cascade=CascadeType.REMOVE)
+    @JsonIgnoreProperties("user")
+    private List<Payment> payments;
 
     public User() {
     }
@@ -42,4 +49,7 @@ public class User {
         this.password = password;
     }
 
+    public List<Payment> getPayments() { return payments; }
+
+    public void setPayments(List<Payment> payments) { this.payments = payments; }
 }
